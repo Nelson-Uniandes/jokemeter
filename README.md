@@ -101,4 +101,4 @@ Este proyecto fue posible gracias a:
 
 ## 📜 Licencia
 
-MIT License © 2025 Nelson Penagos
+MIT License © 2025
