@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JokeMeter</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header>
+    <div class="nav">
+        <div class="logo">🧠 JokeMeter</div>
+        <div class="nav-links">
+          <a href="https://github.com/tu-usuario/tu-repo" target="_blank" class="nav-link">Repo</a>
+          <a href="#" onclick="openModal()" class="nav-link">Equipo</a>
+        </div>
+    </div>
+  </header>
+
+  <main>
+    <h1>Let AI Judge Your Jokes</h1>
+    <p class="subtitle">Let the algorithm roast your sense of humor 🤡</p>
+
+    <div class="form-box">
+      <textarea id="jokeInput" placeholder="Type or paste your joke here..."></textarea>
+      <select id="modelSelect">
+        <option value="model_a">Model A - Fast & Light</option>
+      </select>
+      <button onclick="rateJoke()">😂 Rate this joke!</button>
+    </div>
+
+    <div id="resultContainer" class="hidden">
+        <div class="progress-ring">
+          <svg class="circle-svg" width="120" height="120">
+            <circle class="circle-bg" cx="60" cy="60" r="50" />
+            <circle class="circle-bar" cx="60" cy="60" r="50" />
+          </svg>
+          <div class="emoji-centered" id="emoji">🤣</div>
+        </div>
+        <div class="score-large">
+          <span id="score">0.0</span><span class="total">/10</span>
+        </div>
+        <p id="feedbackText" class="feedback-text"></p>
+        <p id="contextText" class="context-text"></p>
+      </div>      
+  </main>
+
+  <footer>
+    <p>Made with ❤️ and a terrible sense of humor</p>
+  </footer>
+
+  <div id="creatorsModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <h3>Equipo</h3>
+      <ul>
+        <li>Andrés Vergara</li>
+        <li>Andres Lenis</li>
+        <li>Kevin Castellanos</li>
+        <li>Nelson Penagos</li>
+        <li>Nicolas Oviedo</li>
+      </ul>
+    </div>
+  </div>
+  
+  <script src="/static/script.js"></script>
+</body>
+</html>
