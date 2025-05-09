@@ -14,16 +14,15 @@ RUN pip install --no-cache-dir -r requirements.txt \
 # Copiar el código fuente
 COPY app/ ./app/
 
-# Copiar archivos necesarios de DVC (pero no los modelos)
+# Copiar archivos necesarios de DVC
 COPY models.dvc ./
-COPY app/models.dvc ./app/
+COPY app/models/trained.dvc ./app/models/
 COPY .dvc .dvc
 COPY .dvcignore ./
+COPY .git .git
 
 # Copiar el entrypoint
 COPY entrypoint.sh ./
-
-# Dar permisos de ejecución
 RUN chmod +x entrypoint.sh
 
 # Exponer el puerto
