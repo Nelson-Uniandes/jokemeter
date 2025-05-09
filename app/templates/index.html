@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,25 +11,27 @@
     <div class="nav">
         <div class="logo">🧠 JokeMeter</div>
         <div class="nav-links">
-          <a href="https://github.com/Nelson-Uniandes/jokemeter" target="_blank" class="nav-link">Repo</a>
+          <a href="https://github.com/Nelson-Uniandes/jokemeter" target="_blank" class="nav-link">Repositorio</a>
           <a href="#" onclick="openModal()" class="nav-link">Equipo</a>
         </div>
     </div>
   </header>
 
   <main>
-    <h1>Let AI Judge Your Jokes</h1>
-    <p class="subtitle">Let the algorithm roast your sense of humor 🤡</p>
+    <h1>Deja que la IA juzgue tus chistes</h1>
+    <p class="subtitle">Permite que el algoritmo evalúe tu sentido del humor 🤡</p>
 
     <div class="form-box">
-      <textarea id="jokeInput" placeholder="Type or paste your joke here..."></textarea>
+      <textarea id="jokeInput" placeholder="Escribe o pega tu chiste aquí..."></textarea>
       <select id="modelSelect">
-        <option value="model_a">Model A - Fast & Light</option>
+        <option value="model_a">Modelo A - Rápido y liviano</option>
       </select>
-      <button onclick="rateJoke()">😂 Rate this joke!</button>
+      <button onclick="rateJoke()">😂 ¡Calificar chiste!</button>
     </div>
 
     <div id="resultContainer" class="hidden">
+        <div id="humorLabel" class="humor-label"></div>
+
         <div class="progress-ring">
           <svg class="circle-svg" width="120" height="120">
             <circle class="circle-bg" cx="60" cy="60" r="50" />
@@ -38,7 +40,7 @@
           <div class="emoji-centered" id="emoji">🤣</div>
         </div>
         <div class="score-large">
-          <span id="score">0.0</span><span class="total">/10</span>
+          <span id="score">0.0</span><span class="total">/5</span>
         </div>
         <p id="feedbackText" class="feedback-text"></p>
         <p id="contextText" class="context-text"></p>
@@ -46,7 +48,7 @@
   </main>
 
   <footer>
-    <p>Made with ❤️ and a terrible sense of humor</p>
+    <p>Hecho con ❤️ y un sentido del humor cuestionable</p>
   </footer>
 
   <div id="creatorsModal" class="modal hidden">

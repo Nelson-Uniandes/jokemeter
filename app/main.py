@@ -4,8 +4,9 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from app.models.dummy_model import score_joke
 from fastapi.middleware.cors import CORSMiddleware
+from app.models.predictor import evaluate_joke
+from app.models.loader import list_available_models
 
 app = FastAPI()
 
@@ -38,5 +39,11 @@ class JokeRequest(BaseModel):
 
 @app.post("/rate-joke")
 def rate_joke(payload: JokeRequest):
-    score, feedback = score_joke(payload.joke, payload.model)
-    return {"score": score, "feedback": feedback}
+    try:
+        return evaluate_joke(payload.joke, payload.model)
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/models")
+def get_models():
+    return list_available_models()

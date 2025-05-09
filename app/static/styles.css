@@ -157,7 +157,7 @@ body {
   
   /* Footer */
   footer {
-    padding: 20px;
+    padding: 0 0 20px 0;
     text-align: center;
     font-size: 14px;
     color: #999;
@@ -228,5 +228,13 @@ body {
     background-color: #e0e7ff; /* azul clarito */
     color: #4338ca; /* azul vibrante */
   }
+
+  .humor-label {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
   
   

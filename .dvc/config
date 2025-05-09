@@ -1,0 +1,5 @@
+[core]
+    autostage = true
+    remote = modelo-s3
+['remote "modelo-s3"']
+    url = s3://proyecto-grado-modelos

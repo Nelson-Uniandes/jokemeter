@@ -1,3 +1,7 @@
 fastapi
 uvicorn
+joblib
+scikit-learn
 jinja2
+torch
+transformers

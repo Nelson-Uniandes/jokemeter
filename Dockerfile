@@ -10,11 +10,14 @@ COPY requirements.txt .
 # Instalar dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el resto del código
+# Copiar el código fuente
 COPY app/ ./app/
 
-# Exponer el puerto
+# Copiar los modelos Hugging Face descargados previamente
+COPY models/ ./models/
+
+# Exponer el puerto de la API
 EXPOSE 8000
 
-# Comando para iniciar el servidor
+# Comando para iniciar FastAPI con Uvicorn
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
