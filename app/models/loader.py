@@ -59,10 +59,14 @@ def load_tokenizer_and_encoder(model_name: str):
 
 def list_available_models():
     try:
-        return [
+        local_models = [
             f.replace(".pkl", "") for f in os.listdir(MODEL_DIR)
             if f.endswith(".pkl")
         ]
+    
     except Exception as e:
         print("❌ Error al listar modelos:", e)
-        return []
+        # return []
+        local_models = []
+    api_models = ['Claude']
+    return local_models +  api_models + ['QWEN']

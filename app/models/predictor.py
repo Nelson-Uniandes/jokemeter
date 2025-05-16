@@ -1,8 +1,57 @@
 from app.models.loader import load_model, load_tokenizer_and_encoder
 import torch
+from app.models.qwen_predict import PredictQwen
+import anthropic
+import os
+
+# PredictQwen(device='cpu').loadModel()
+
+print("OK")
+print("CLAUDE_TOKEN", os.getenv('CLAUDE_TOKEN'))
+
+def evaluate_joke_claude(text:str):
+    api_key = os.getenv('CLAUDE_TOKEN')
+    client = anthropic.Anthropic(api_key=api_key)
+    response = client.messages.create(
+            model="claude-3-5-sonnet-20241022",
+            max_tokens=10,
+            messages=[
+                {"role": "user", "content": f"Clasifica el siguiente texto con los valores 0 o 1, donde 1 indica que es un texto con contenido humorístico y 0 en caso contrario, retorna únicamente el valor 0 o 1:\n{text}"}
+            ]
+        )
+    prediction_binary = response.content[0].text
+
+
+
+    response = client.messages.create(
+            model="claude-3-5-sonnet-20241022",
+            max_tokens=10,
+            messages=[
+                {"role": "user", "content": f"Asigna un puntaje entre 1 y 5 dependiendo del nivel de gracia causado por el siguiente texto, donde 1 es bajo y 5 es alto, retorna únicamente el puntaje:\n{text}"}
+            ]
+        )
+    prediction_score = response.content[0].text
+    return {
+        "is_funny": prediction_binary,
+        "confidence": round(0, 2),
+        "score": prediction_score
+    }
 
 def evaluate_joke(joke: str, model_name: str):
     try:
+        if model_name == 'Claude':
+            return evaluate_joke_claude(joke)
+    
+        elif model_name == 'QWEN':
+            qwen_predictor = PredictQwen(device='cpu')
+            score = qwen_predictor.predict_score(joke)
+            is_joke = qwen_predictor.predict_is_joke(joke)
+            return {
+                'score':score,
+                'is_funny':is_joke
+                
+            }
+
         clf = load_model(model_name)
         tokenizer, encoder = load_tokenizer_and_encoder(model_name)
 

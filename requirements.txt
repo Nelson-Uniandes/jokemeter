@@ -5,3 +5,4 @@ scikit-learn
 jinja2
 torch
 transformers
+anthropic
