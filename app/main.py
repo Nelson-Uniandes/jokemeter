@@ -47,3 +47,7 @@ def rate_joke(payload: JokeRequest):
 @app.get("/models")
 def get_models():
     return list_available_models()
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

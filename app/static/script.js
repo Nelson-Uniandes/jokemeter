@@ -26,7 +26,7 @@ async function rateJoke() {
 
   // Mostrar si es humor y confianza
   const humorLabel = document.getElementById("humorLabel");
-  const label = data.is_funny ? "✅ Es chistoso" : "❌ No es chistoso";
+  const label = data.is_funny ? "✅ Es un chiste" : "❌ No es un chiste";
   const confidence = Math.round(data.confidence * 100) + "%";
   humorLabel.textContent = `${label} (confianza: ${confidence})`;
 
@@ -41,50 +41,54 @@ async function rateJoke() {
   humorLabel.style.maxWidth = "437px";
   humorLabel.style.margin = "15px auto 10px";
 
-  // Mostrar resultado
-  document.getElementById("resultContainer").classList.remove("hidden");
-  document.getElementById("score").textContent = data.score.toFixed(1);
-
-  // Emoji
-  const emojiEl = document.getElementById("emoji");
-  const score = data.score;
-  let emoji = "🤣";
-  let feedback = "";
-  let context = "";
-
-  if (score >= 8) {
-    emoji = "🤣";
-    feedback = "¡Muy gracioso! Tal vez tengas futuro en la comedia.";
-    context = "Este chiste está en el 15% superior de todos los enviados.";
-  } else if (score >= 6) {
-    emoji = "😄";
-    feedback = "¡Nada mal! Tienes un buen sentido del humor.";
-    context = "Este chiste está en el 40% superior de los enviados.";
-  } else if (score >= 4) {
-    emoji = "😐";
-    feedback = "Está bien... tal vez le falte un poco más de chispa.";
-    context = "Este chiste está en un nivel promedio.";
-  } else if (score >= 2) {
-    emoji = "😕";
-    feedback = "Hmm... hemos visto mejores.";
-    context = "Este chiste está en el 40% inferior.";
+  if (data.is_funny) {
+    // Mostrar resultado
+    document.getElementById("humorLabelContanier").classList.remove("hidden");
+    document.getElementById("circleHumorContainer").classList.remove("hidden");
+    document.getElementById("score").textContent = data.score.toFixed(1);
+    // Emoji
+    const emojiEl = document.getElementById("emoji");
+    const score = data.score;
+    let emoji = "🤣";
+    let feedback = "";
+    let context = "";
+    if (score >= 8) {
+      emoji = "🤣";
+      feedback = "¡Muy gracioso! Tal vez tengas futuro en la comedia.";
+      context = "Este chiste está en el 15% superior de todos los enviados.";
+    } else if (score >= 6) {
+      emoji = "😄";
+      feedback = "¡Nada mal! Tienes un buen sentido del humor.";
+      context = "Este chiste está en el 40% superior de los enviados.";
+    } else if (score >= 4) {
+      emoji = "😐";
+      feedback = "Está bien... tal vez le falte un poco más de chispa.";
+      context = "Este chiste está en un nivel promedio.";
+    } else if (score >= 2) {
+      emoji = "😕";
+      feedback = "Hmm... hemos visto mejores.";
+      context = "Este chiste está en el 40% inferior.";
+    } else {
+      emoji = "😩";
+      feedback = "Uy... tal vez no dejes tu trabajo actual.";
+      context = "Este chiste está en el 10% inferior.";
+    }
+    emojiEl.textContent = emoji;
+    document.getElementById("feedbackText").textContent = feedback;
+    document.getElementById("contextText").textContent = context;
+    // Círculo animado
+    const radius = 50;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference - (score / 10) * circumference;
+    const bar = document.querySelector(".circle-bar");
+    bar.style.strokeDashoffset = offset;
   } else {
-    emoji = "😩";
-    feedback = "Uy... tal vez no dejes tu trabajo actual.";
-    context = "Este chiste está en el 10% inferior.";
+    // Ocultar resultado si no es chiste
+    document.getElementById("humorLabelContanier").classList.remove("hidden");
+    document.getElementById("circleHumorContainer").classList.add("hidden");
   }
-
-  emojiEl.textContent = emoji;
-  document.getElementById("feedbackText").textContent = feedback;
-  document.getElementById("contextText").textContent = context;
-
-  // Círculo animado
-  const radius = 50;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 10) * circumference;
-  const bar = document.querySelector(".circle-bar");
-  bar.style.strokeDashoffset = offset;
 }
+
 
 function openModal() {
   document.getElementById("creatorsModal").classList.remove("hidden");

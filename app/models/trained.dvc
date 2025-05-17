@@ -1,6 +1,6 @@
 outs:
-- md5: 882ea1d0f2e8170461fabcbe28da5968.dir
-  size: 316868
-  nfiles: 1
+- md5: 8956d95d354df68e5a88f04f9d0a90b8.dir
+  size: 386960
+  nfiles: 2
   hash: md5
   path: trained
