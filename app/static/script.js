@@ -54,19 +54,19 @@ async function rateJoke() {
       let feedback = "";
       let context = "";
 
-      if (score >= 8) {
+      if (score === 5) {
         emoji = "🤣";
         feedback = "¡Muy gracioso! Tal vez tengas futuro en la comedia.";
-        context = "Este chiste está en el 15% superior de todos los enviados.";
-      } else if (score >= 6) {
+        context = "Este chiste está en el 15% superior.";
+      } else if (score === 4) {
         emoji = "😄";
         feedback = "¡Nada mal! Tienes un buen sentido del humor.";
-        context = "Este chiste está en el 40% superior de los enviados.";
-      } else if (score >= 4) {
+        context = "Este chiste está en el 40% superior.";
+      } else if (score === 3) {
         emoji = "😐";
         feedback = "Está bien... tal vez le falte un poco más de chispa.";
-        context = "Este chiste está en un nivel promedio.";
-      } else if (score >= 2) {
+        context = "Este chiste es promedio.";
+      } else if (score === 2) {
         emoji = "😕";
         feedback = "Hmm... hemos visto mejores.";
         context = "Este chiste está en el 40% inferior.";
@@ -82,7 +82,7 @@ async function rateJoke() {
 
       const radius = 50;
       const circumference = 2 * Math.PI * radius;
-      const offset = circumference - (score / 10) * circumference;
+      const offset = circumference - (score / 5) * circumference;
       const bar = document.querySelector(".circle-bar");
       bar.style.strokeDashoffset = offset;
     } else {
