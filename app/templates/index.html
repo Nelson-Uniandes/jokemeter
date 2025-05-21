@@ -27,11 +27,16 @@
         <option value="model_a">Modelo A - Rápido y liviano</option>
       </select>
       <button onclick="rateJoke()">😂 ¡Calificar chiste!</button>
+      <div id="loadingIndicator" class="hidden" style="text-align:center; margin-top: 10px;">
+        ⏳ Procesando chiste...
+      </div>
     </div>
 
-    <div id="resultContainer" class="hidden">
+    <div id="resultContainer">
+      <div id="humorLabelContanier" class="hidden">
         <div id="humorLabel" class="humor-label"></div>
-
+      </div>
+      <div id="circleHumorContainer" class="hidden">
         <div class="progress-ring">
           <svg class="circle-svg" width="120" height="120">
             <circle class="circle-bg" cx="60" cy="60" r="50" />
@@ -44,7 +49,8 @@
         </div>
         <p id="feedbackText" class="feedback-text"></p>
         <p id="contextText" class="context-text"></p>
-      </div>      
+      </div>
+    </div>      
   </main>
 
   <footer>

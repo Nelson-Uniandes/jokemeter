@@ -9,7 +9,11 @@ _cache = {}
 
 # Asociación entre modelo .pkl y encoder/tokenizer
 MODEL_CONFIG = {
-    "modelo_mlp_roberta": {
+    "RoBERTa_mlp_classifier_bin": {
+        "encoder_name": "./models/roberta-base-bne/model",
+        "tokenizer_path": "./models/roberta-base-bne/tokenizer"
+    },
+    "RoBERTa_mlp_classifier_multi":{
         "encoder_name": "./models/roberta-base-bne/model",
         "tokenizer_path": "./models/roberta-base-bne/tokenizer"
     }
@@ -20,13 +24,19 @@ def load_model(name: str):
         if name in _cache:
             return _cache[name]
 
-        path = os.path.join(MODEL_DIR, f"{name}.pkl")
-        if not os.path.exists(path):
-            raise FileNotFoundError(f"Modelo '{name}' no encontrado en {MODEL_DIR}")
+        # Buscar el modelo en subcarpetas de trained/
+        for folder in os.listdir(MODEL_DIR):
+            folder_path = os.path.join(MODEL_DIR, folder)
+            if not os.path.isdir(folder_path):
+                continue
 
-        model = joblib.load(path)
-        _cache[name] = model
-        return model
+            model_path = os.path.join(folder_path, f"{name}.pkl")
+            if os.path.exists(model_path):
+                model = joblib.load(model_path)
+                _cache[name] = model
+                return model
+
+        raise FileNotFoundError(f"Modelo '{name}' no encontrado en subcarpetas de {MODEL_DIR}")
 
     except Exception as e:
         print(f"❌ Error al cargar el modelo '{name}':", e)
@@ -59,14 +69,37 @@ def load_tokenizer_and_encoder(model_name: str):
 
 def list_available_models():
     try:
-        local_models = [
-            f.replace(".pkl", "") for f in os.listdir(MODEL_DIR)
-            if f.endswith(".pkl")
-        ]
+        # local_models = [
+        #     f.replace(".pkl", "") for f in os.listdir(MODEL_DIR)
+        #     if f.endswith(".pkl")
+        # ]
     
+        result = {}
+
+        for folder_name in os.listdir(MODEL_DIR):
+            folder_path = os.path.join(MODEL_DIR, folder_name)
+            if not os.path.isdir(folder_path):
+                continue
+
+            model_types = []
+            for file in os.listdir(folder_path):
+                if file.endswith(".pkl"):
+                    fname = file.lower()
+                    if "bin" in fname:
+                        model_types.append("bin")
+                    elif "multi" in fname or "score" in fname:
+                        model_types.append("multi")
+                    else:
+                        model_types.append("otro")
+
+            if model_types:
+                result[folder_name] = sorted(set(model_types))
+
+        local_models_pickle= [f"{k} → {' + '.join(v)}" for k, v in result.items()]
+
     except Exception as e:
         print("❌ Error al listar modelos:", e)
         # return []
-        local_models = []
+        local_models_pickle = []
     api_models = ['Claude']
-    return local_models +  api_models + ['QWEN']
+    return local_models_pickle +  api_models + ['LLama - QWEN']
