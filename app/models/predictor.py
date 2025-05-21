@@ -1,10 +1,49 @@
 from app.models.loader import load_model, load_tokenizer_and_encoder
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import anthropic
+import os
+from app.models.qwen_predict import PredictQwen
+
 
 NAME_OVERRIDES = {
     "roberta": "RoBERTa",
 }
+
+print("OK")
+PredictQwen(device='cpu').loadModel()
+
+# print("CLAUDE_TOKEN", os.getenv('CLAUDE_TOKEN'))
+
+
+def evaluate_joke_claude(text:str):
+    print("EVALUANDO CON CLAOUDE")
+    api_key = os.getenv('CLAUDE_TOKEN')
+    client = anthropic.Anthropic(api_key=api_key)
+    response = client.messages.create(
+            model="claude-3-5-sonnet-20241022",
+            max_tokens=10,
+            messages=[
+                {"role": "user", "content": f"Clasifica el siguiente texto con los valores 0 o 1, donde 1 indica que es un texto con contenido humorístico y 0 en caso contrario, retorna únicamente el valor 0 o 1:\n{text}"}
+            ]
+        )
+    prediction_binary = response.content[0].text
+
+
+
+    response = client.messages.create(
+            model="claude-3-5-sonnet-20241022",
+            max_tokens=10,
+            messages=[
+                {"role": "user", "content": f"Asigna un puntaje entre 1 y 5 dependiendo del nivel de gracia causado por el siguiente texto, donde 1 es bajo y 5 es alto, retorna únicamente el puntaje:\n{text}"}
+            ]
+        )
+    prediction_score = response.content[0].text
+    return {
+        "is_funny": int(prediction_binary),
+        "confidence": round(0, 2),
+        "score": int(prediction_score)
+    }
 
 def generate_model_dict(entry: str):
     try:
@@ -34,8 +73,12 @@ def evaluate_joke(joke: str, model_name: str):
     }
     print(model_name, flush=True)
     try:
+
+        if model_name == "Claude":
+            return evaluate_joke_claude(joke)
         #model_name = "llama"
         # Detecta si es modelo Llama (ajusta el string si tienes otro nombre para Llama2)
+
         if detect_models(model_name):
             print("LLAMA o QWEN detectado", flush=True)
             print(model["llama"])
@@ -44,13 +87,16 @@ def evaluate_joke(joke: str, model_name: str):
             model.eval()
             inputs = tokenizer(joke, return_tensors="pt", truncation=True, padding=True, max_length=256)
             inputs = {k: v.to(device) for k, v in inputs.items()}
+            qwen_predictor = PredictQwen(device='cpu')
+            
             with torch.no_grad():
                 outputs = model(**inputs)
                 logits = outputs.logits
                 probs = torch.softmax(logits, dim=-1)
                 pred = torch.argmax(probs, dim=-1).item()
                 confidence = probs[0, pred].item()
-                score = 0
+                score = int(qwen_predictor.predict_score(joke))
+
             return {
                 "is_funny": bool(pred),
                 "confidence": round(confidence, 2),
