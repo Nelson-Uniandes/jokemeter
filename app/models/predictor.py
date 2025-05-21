@@ -1,12 +1,15 @@
 from app.models.loader import load_model, load_tokenizer_and_encoder
 import torch
+# from transformers import AutoTokenizer, AutoModelForSequenceClassification
+
+# <<<<<<< HEAD
 from app.models.qwen_predict import PredictQwen
 from app.models.llama_predict import PredictLLama
 import anthropic
 import os
 
-PredictQwen(device='cpu').loadModel()
-PredictLLama(device='cpu').loadModel()
+# PredictQwen(device='cpu').loadModel()
+# PredictLLama(device='cpu').loadModel()
 
 print("OK")
 print("CLAUDE_TOKEN", os.getenv('CLAUDE_TOKEN'))
@@ -41,8 +44,6 @@ def evaluate_joke_claude(text:str):
 
 NAME_OVERRIDES = {
     "roberta": "RoBERTa",
-    "xlm-r": "XLM-R",
-    "maria": "MarIA"
 }
 
 def generate_model_dict(entry: str):
@@ -63,9 +64,17 @@ def generate_model_dict(entry: str):
         print("❌ Error procesando entrada:", e)
         return {}
 
+def detect_models(s: str):
+    s_lower = s.lower()
+    return "llama" in s_lower or "qwen" in s_lower
 
 def evaluate_joke(joke: str, model_name: str):
+    model = {
+        "llama":"Llama_mlp_classifier_bin"
+    }
+    print(model_name, flush=True)
     try:
+# <<<<<<< HEAD
         if model_name == 'Claude':
             return evaluate_joke_claude(joke)
     
@@ -82,8 +91,35 @@ def evaluate_joke(joke: str, model_name: str):
 
         clf = load_model(model_name)
         tokenizer, encoder = load_tokenizer_and_encoder(model_name)
+# =======
+# NELSON TE COMNETO ESTO
+#         #model_name = "llama"
+#         # Detecta si es modelo Llama (ajusta el string si tienes otro nombre para Llama2)
+#         if detect_models(model_name):
+#             print("LLAMA o QWEN detectado", flush=True)
+#             print(model["llama"])
+#             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+#             tokenizer, model = load_tokenizer_and_encoder(model["llama"])
+#             model.eval()
+#             inputs = tokenizer(joke, return_tensors="pt", truncation=True, padding=True, max_length=256)
+#             inputs = {k: v.to(device) for k, v in inputs.items()}
+#             with torch.no_grad():
+#                 outputs = model(**inputs)
+#                 logits = outputs.logits
+#                 probs = torch.softmax(logits, dim=-1)
+#                 pred = torch.argmax(probs, dim=-1).item()
+#                 confidence = probs[0, pred].item()
+#                 score = 0
+#             return {
+#                 "is_funny": bool(pred),
+#                 "confidence": round(confidence, 2),
+#                 "score": score
+#             }
+        
+#         print("ROBERTA", flush=True)
+#         # ---- Resto de modelos, pipeline original ----
+# >>>>>>> 1e2ff987affee8eaa4639266527829d9f7f4f240
         model_names = generate_model_dict(model_name)
-        # Modelo binario y multi-score
         clf = load_model(model_names["bin"])
         clf_multi = load_model(model_names["multi"])
         tokenizer, encoder = load_tokenizer_and_encoder(model_names["bin"])
@@ -96,14 +132,11 @@ def evaluate_joke(joke: str, model_name: str):
             outputs = encoder(**inputs)
             embedding = outputs.last_hidden_state[:, 0, :].squeeze().cpu().numpy().reshape(1, -1)
 
-        # Clasificación
         prediction = clf.predict(embedding)[0]
         proba = clf.predict_proba(embedding)[0]
         
         is_funny = bool(prediction)
         confidence = float(proba[prediction])
-
-        # Score (multi)
         score = float(clf_multi.predict(embedding)[0])
 
         return {

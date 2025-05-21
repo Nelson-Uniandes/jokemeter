@@ -2,6 +2,7 @@ import os
 import joblib
 from transformers import AutoTokenizer, AutoModel
 import torch
+from transformers import AutoTokenizer, AutoModel, AutoModelForSequenceClassification
 
 # Carpeta donde están los modelos .pkl
 MODEL_DIR = os.path.join(os.path.dirname(__file__), "trained")
@@ -11,11 +12,18 @@ _cache = {}
 MODEL_CONFIG = {
     "RoBERTa_mlp_classifier_bin": {
         "encoder_name": "./models/roberta-base-bne/model",
-        "tokenizer_path": "./models/roberta-base-bne/tokenizer"
+        "tokenizer_path": "./models/roberta-base-bne/tokenizer",
+        "type": "encoder"
     },
     "RoBERTa_mlp_classifier_multi":{
         "encoder_name": "./models/roberta-base-bne/model",
-        "tokenizer_path": "./models/roberta-base-bne/tokenizer"
+        "tokenizer_path": "./models/roberta-base-bne/tokenizer",
+        "type": "encoder"
+    },
+    "Llama_mlp_classifier_bin":{
+        "encoder_name": "./models/llama/model",
+        "tokenizer_path": "./models/llama/tokenizer",
+        "type": "classification" 
     }
 }
 
@@ -43,22 +51,35 @@ def load_model(name: str):
         raise
 
 def load_tokenizer_and_encoder(model_name: str):
+    """
+    Carga tokenizer y modelo, soportando:
+    - Modelos base (encoder) para extracción de embeddings
+    - Modelos fine-tuned para clasificación directa (ej: Llama, BERT, RoBERTa fine-tuned)
+    El tipo se define en MODEL_CONFIG con la clave "type": "encoder" o "classification"
+    """
     try:
         if model_name not in MODEL_CONFIG:
             raise ValueError(f"Modelo '{model_name}' no está registrado en MODEL_CONFIG")
 
-        encoder_path = MODEL_CONFIG[model_name]["encoder_name"]
-        tokenizer_path = MODEL_CONFIG[model_name]["tokenizer_path"]
+        config = MODEL_CONFIG[model_name]
+        encoder_path = config["encoder_name"]
+        tokenizer_path = config["tokenizer_path"]
+        model_type = config.get("type", "encoder")  # Por defecto "encoder"
 
         tokenizer_key = f"tokenizer::{tokenizer_path}"
-        encoder_key = f"encoder::{encoder_path}"
+        encoder_key = f"encoder::{encoder_path}::{model_type}"
 
+        # Tokenizer siempre igual
         if tokenizer_key not in _cache:
             _cache[tokenizer_key] = AutoTokenizer.from_pretrained(tokenizer_path)
 
+        # Modelo depende del tipo
         if encoder_key not in _cache:
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            _cache[encoder_key] = AutoModel.from_pretrained(encoder_path).to(device)
+            if model_type == "classification":
+                _cache[encoder_key] = AutoModelForSequenceClassification.from_pretrained(encoder_path).to(device)
+            else:
+                _cache[encoder_key] = AutoModel.from_pretrained(encoder_path).to(device)
 
         return _cache[tokenizer_key], _cache[encoder_key]
 
@@ -103,3 +124,6 @@ def list_available_models():
         local_models_pickle = []
     api_models = ['Claude']
     return local_models_pickle +  api_models + ['LLama - QWEN']
+# =======
+    # return ["roberta → bin + multi", "llama → bin + qwen → multi"]
+
