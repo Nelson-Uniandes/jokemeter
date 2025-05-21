@@ -89,5 +89,5 @@ def load_tokenizer_and_encoder(model_name: str):
 
 
 def list_available_models():
-    return ["roberta → bin + multi", "llama → bin + qwen → multi"]
+    return ["roberta → bin + multi", "llama → bin + qwen → multi","Claude"]
 
