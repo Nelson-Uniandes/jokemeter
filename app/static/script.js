@@ -30,8 +30,16 @@ async function rateJoke() {
 
     const humorLabel = document.getElementById("humorLabel");
     const label = data.is_funny ? "✅ Es un chiste" : "❌ No es un chiste";
-    const confidence = Math.round(data.confidence * 100) + "%";
-    humorLabel.textContent = `${label} (confianza: ${confidence})`;
+    const confidence = (typeof data.confidence === 'number' && !isNaN(data.confidence) )?Math.round(data.confidence * 100) + "%":null;
+    console.log("ANDREs",confidence)
+    if(confidence != null){
+
+      humorLabel.textContent = `${label} (confianza: ${confidence})`;
+    }
+    else{
+      humorLabel.textContent = `${label}`;
+
+    }
 
     humorLabel.style.backgroundColor = data.is_funny ? "#d4edda" : "#f8d7da";
     humorLabel.style.color = "#333";

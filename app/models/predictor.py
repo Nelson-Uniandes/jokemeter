@@ -4,6 +4,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import anthropic
 import os
 from app.models.qwen_predict import PredictQwen
+from app.models.llama_predict import PredictLLama
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -14,6 +15,7 @@ NAME_OVERRIDES = {
 
 print("OK")
 PredictQwen(device='cpu').loadModel()
+PredictLLama(device='cpu').loadModel()
 
 def evaluate_joke_claude(text:str):
     print("EVALUANDO CON CLAOUDE")
@@ -56,7 +58,7 @@ def evaluate_joke_claude(text:str):
 
     return {
         "is_funny": int(prediction_binary),
-        "confidence": round(prediction_confidence, 2),
+        "confidence": None,
         "score": int(prediction_score)
     }
 
@@ -96,25 +98,27 @@ def evaluate_joke(joke: str, model_name: str):
 
         if detect_models(model_name):
             print("LLAMA o QWEN detectado", flush=True)
-            print(model["llama"])
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            tokenizer, model = load_tokenizer_and_encoder(model["llama"])
-            model.eval()
-            inputs = tokenizer(joke, return_tensors="pt", truncation=True, padding=True, max_length=256)
-            inputs = {k: v.to(device) for k, v in inputs.items()}
-            qwen_predictor = PredictQwen(device='cpu')
-            
-            with torch.no_grad():
-                outputs = model(**inputs)
-                logits = outputs.logits
-                probs = torch.softmax(logits, dim=-1)
-                pred = torch.argmax(probs, dim=-1).item()
-                confidence = probs[0, pred].item()
-                score = int(qwen_predictor.predict_score(joke))
+            # print(model["llama"])
+            # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            # tokenizer, model = load_tokenizer_and_encoder(model["llama"])
+            # model.eval()
+            # inputs = tokenizer(joke, return_tensors="pt", truncation=True, padding=True, max_length=256)
+            # inputs = {k: v.to(device) for k, v in inputs.items()}
 
+            
+            # with torch.no_grad():
+            qwen_predictor = PredictQwen(device='cpu')
+            llama_predictor = PredictLLama(device='cpu')
+            # outputs = model(**inputs)
+            # logits = outputs.logits
+            # probs = torch.softmax(logits, dim=-1)
+            # pred = torch.argmax(probs, dim=-1).item()
+            # confidence = probs[0, pred].item()
+            pred = llama_predictor.predict_is_joke(joke)
+            score = int(qwen_predictor.predict_score(joke)) 
             return {
                 "is_funny": bool(pred),
-                "confidence": round(confidence, 2),
+                "confidence": None,
                 "score": score
             }
         
