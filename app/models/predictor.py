@@ -4,6 +4,8 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import anthropic
 import os
 from app.models.qwen_predict import PredictQwen
+from dotenv import load_dotenv
+load_dotenv()
 
 
 NAME_OVERRIDES = {
@@ -13,11 +15,9 @@ NAME_OVERRIDES = {
 print("OK")
 PredictQwen(device='cpu').loadModel()
 
-# print("CLAUDE_TOKEN", os.getenv('CLAUDE_TOKEN'))
-
-
 def evaluate_joke_claude(text:str):
     print("EVALUANDO CON CLAOUDE")
+    print("CLAUDE_TOKEN", os.getenv('CLAUDE_TOKEN'))
     api_key = os.getenv('CLAUDE_TOKEN')
     client = anthropic.Anthropic(api_key=api_key)
     response = client.messages.create(
@@ -39,9 +39,24 @@ def evaluate_joke_claude(text:str):
             ]
         )
     prediction_score = response.content[0].text
+
+    # Pregunta adicional: confianza
+    response = client.messages.create(
+        model="claude-3-5-sonnet-20241022",
+        max_tokens=10,
+        messages=[
+            {"role": "user", "content": f"¿Qué tan seguro estás de la clasificación anterior para este texto? Devuelve solo un valor numérico entre 0 y 1, donde 1 es completamente seguro:\n{text}"}
+        ]
+    )
+    prediction_confidence = response.content[0].text.strip()
+    try:
+        prediction_confidence = float(prediction_confidence)
+    except Exception:
+        prediction_confidence = 0.5  # Valor neutro si la respuesta no es numérica
+
     return {
         "is_funny": int(prediction_binary),
-        "confidence": round(0, 2),
+        "confidence": round(prediction_confidence, 2),
         "score": int(prediction_score)
     }
 
