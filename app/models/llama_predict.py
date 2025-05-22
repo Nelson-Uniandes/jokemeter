@@ -62,7 +62,7 @@ from tqdm import tqdm
 class PredictLLama():
     def __init__(self, device='auto'):
         PredictLLama.model = None
-        PredictLLama.model_path  = "./app/models/modelos-llama/"
+        PredictLLama.model_path  = "./models/llama/"
         
 
         self.device = device
