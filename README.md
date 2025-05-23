@@ -78,18 +78,20 @@ docker run -d -p 8000:8000 --name jokemeter_container jokemeter
 
 ```
 jokemeter/
-├── app/
-│   ├── main.py
-│   ├── models/
-│   │   └── dummy_model.py
-│   ├── static/
-│   │   ├── styles.css
-│   │   └── script.js
-│   └── templates/
-│       └── index.html
-├── requirements.txt
-├── Dockerfile
-└── README.md
+│
+├── app/                 # Código fuente principal de la aplicación (FastAPI, scripts, etc.)
+├── datos/               # Conjunto de datos utilizados para entrenamiento/pruebas
+├── modelos/             # Modelos entrenados y archivos relacionados
+├── notebooks/           # Jupyter Notebooks para experimentación y pruebas
+│
+├── .dvc/                # Archivos y configuración interna de DVC (no editar manualmente)
+├── .dvcignore           # Archivos/Directorios ignorados por DVC
+├── .gitignore           # Archivos/Directorios ignorados por Git
+├── Dockerfile           # Configuración de la imagen Docker
+├── entrypoint.sh        # Script de inicio para Docker o despliegue
+├── models.dvc           # Archivo de control de DVC para la carpeta de modelos
+├── requirements.txt     # Dependencias de Python
+├── README.md            # Documentación principal del proyecto
 ```
 
 ---
