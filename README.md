@@ -9,11 +9,18 @@ JokeMeter es una aplicación web donde puedes escribir un chiste y recibir una p
 
 - 🎨 Interfaz moderna, responsiva y clara
 - 📤 Entrada de texto para chistes
-- 🤖 Selección de modelos IA (Roberta, Claude, LLama - Qwen)
+- 🤖 Selección de modelos IA (RoBERTA, Claude, LLama - Qwen)
 - 🔄 Animación de puntuación circular
 - 😆 Emoji y feedback dinámico según el resultado
 - ⭐ Sección emergente de “Rockstars” (creadores del modelo)
 - 🐳 Contenedor Docker listo para producción o desarrollo
+
+## Instrucciones de uso
+
+- Ingresar al enlace de la aplicación.
+- Despues de cargada la aplicación, ingresar el texto a clasificar.
+- Selecciona con que modelo, o conjunto de modelos se quiere realizar la clasificación.
+- Dar click en "Calificar Chiste".
 
 ---
 
